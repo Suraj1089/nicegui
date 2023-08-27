@@ -1,5 +1,5 @@
+import pandas as pd
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 from nicegui import ui
@@ -72,13 +72,29 @@ def test_html_columns(screen: Screen):
     assert 'text-bold' in screen.find('Alice').get_attribute('class')
 
 
+def test_dynamic_method(screen: Screen):
+    ui.aggrid({
+        'columnDefs': [{'field': 'name'}, {'field': 'age'}],
+        'rowData': [{'name': 'Alice', 'age': '18'}, {'name': 'Bob', 'age': '21'}, {'name': 'Carol', 'age': '42'}],
+        ':getRowHeight': 'params => params.data.age > 35 ? 50 : 25',
+    })
+
+    screen.open('/')
+    trs = screen.find_all_by_class('ag-row')
+    assert len(trs) == 3
+    heights = [int(tr.get_attribute('clientHeight')) for tr in trs]
+    assert 23 <= heights[0] <= 25
+    assert 23 <= heights[1] <= 25
+    assert 48 <= heights[2] <= 50
+
+
 def test_call_api_method_with_argument(screen: Screen):
     grid = ui.aggrid({
         'columnDefs': [{'field': 'name', 'filter': True}],
         'rowData': [{'name': 'Alice'}, {'name': 'Bob'}, {'name': 'Carol'}],
     })
-    filter = {'name': {'filterType': 'text', 'type': 'equals', 'filter': 'Alice'}}
-    ui.button('Filter', on_click=lambda: grid.call_api_method('setFilterModel', filter))
+    filter_model = {'name': {'filterType': 'text', 'type': 'equals', 'filter': 'Alice'}}
+    ui.button('Filter', on_click=lambda: grid.call_api_method('setFilterModel', filter_model))
 
     screen.open('/')
     screen.should_contain('Alice')
@@ -148,7 +164,6 @@ def test_replace_aggrid(screen: Screen):
 
 
 def test_create_from_pandas(screen: Screen):
-    import pandas as pd
     df = pd.DataFrame({'name': ['Alice', 'Bob'], 'age': [18, 21]})
     ui.aggrid.from_pandas(df)
 
@@ -173,4 +188,4 @@ def test_api_method_after_creation(screen: Screen):
 
     screen.open('/')
     screen.click('Create')
-    assert screen.selenium.find_element(By.CLASS_NAME, 'ag-row-selected')
+    assert screen.find_by_class('ag-row-selected')

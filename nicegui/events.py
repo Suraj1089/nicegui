@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from inspect import Parameter, signature
 from typing import TYPE_CHECKING, Any, Awaitable, BinaryIO, Callable, Dict, List, Literal, Optional, Union
 
-from . import background_tasks, globals
+from . import background_tasks, globals  # pylint: disable=redefined-builtin
 from .helpers import KWONLY_SLOTS
 from .slot import Slot
 
@@ -349,6 +349,17 @@ class ScrollEventArguments(UiEventArguments):
     horizontal_percentage: float
     horizontal_size: float
     horizontal_container_size: float
+
+
+@dataclass(**KWONLY_SLOTS)
+class JsonEditorSelectEventArguments(UiEventArguments):
+    selection: Dict
+
+
+@dataclass(**KWONLY_SLOTS)
+class JsonEditorChangeEventArguments(UiEventArguments):
+    content: Dict
+    errors: Dict
 
 
 def handle_event(handler: Optional[Callable[..., Any]], arguments: EventArguments) -> None:

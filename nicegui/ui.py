@@ -29,6 +29,7 @@ __all__ = [
     'input',
     'interactive_image',
     'joystick',
+    'json_editor',
     'keyboard',
     'knob',
     'label',
@@ -118,9 +119,10 @@ from .elements.grid import Grid as grid
 from .elements.html import Html as html
 from .elements.icon import Icon as icon
 from .elements.image import Image as image
-from .elements.input import Input as input
+from .elements.input import Input as input  # pylint: disable=redefined-builtin
 from .elements.interactive_image import InteractiveImage as interactive_image
 from .elements.joystick import Joystick as joystick
+from .elements.json_editor import JsonEditor as json_editor
 from .elements.keyboard import Keyboard as keyboard
 from .elements.knob import Knob as knob
 from .elements.label import Label as label
@@ -167,7 +169,7 @@ from .functions.download import download
 from .functions.html import add_body_html, add_head_html
 from .functions.javascript import run_javascript
 from .functions.notify import notify
-from .functions.open import open
+from .functions.open import open  # pylint: disable=redefined-builtin
 from .functions.refreshable import refreshable
 from .functions.timer import Timer as timer
 from .functions.update import update
